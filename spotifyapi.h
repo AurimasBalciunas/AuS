@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QOAuth2AuthorizationCodeFlow>
 #include <QTimer>
+#include <QString>
 
 class SpotifyAPI : public QObject
 {
@@ -16,6 +17,8 @@ public:
 private:
     QOAuth2AuthorizationCodeFlow* m_oauth2;
     QTimer* timer = new QTimer(this);
+    void setupOAuth2(const QString&);
+    void setupConnections();
 
 private slots:
     void onGranted();
@@ -28,7 +31,7 @@ public slots:
 
 signals:
     void authenticated();
-    void trackInfoReceived(const QString &trackInfo);
+    void trackInfoReceived(const QString &trackName, const QString &artistName, const QString &albumName);
     void albumCoverReceived(const QString &albumCoverUrl);
 
 };
