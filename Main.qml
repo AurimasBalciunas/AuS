@@ -90,7 +90,9 @@ Window {
     Connections {
         target: imageProcessor
         function onImageReady(imagePath) {
+            albumArt.source = ""
             albumArt.source = imagePath
+
         }
     }
 

@@ -26,18 +26,13 @@ void ImageProcessor::onDownloadFinished(QNetworkReply *reply)
         pixmap.loadFromData(reply->readAll());
         pixmap = roundImageCorners(pixmap);
     }
-
-    if (pixmap.isNull()) {
-        qDebug() << "Pixmap is null";
-    }
-
-    qDebug() << "Pre save";
     QString tempPath = "/tmp/image.png";
     qDebug() << pixmap.save(tempPath, "PNG");
-    qDebug() << "Post save";
 
     //TODO: convert pixmap to image and emit ehre
-    emit imageReady(QUrl::fromLocalFile(tempPath).toString());
+    QString imagePath = QUrl::fromLocalFile(tempPath).toString();
+    QString dynamicImagePath = imagePath + "?" + QString::number(QDateTime::currentMSecsSinceEpoch());
+    emit imageReady(dynamicImagePath);
 
 }
 
