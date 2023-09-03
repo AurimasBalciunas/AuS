@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Window
-
-
+import QtQuick.Controls
 Window {
     width: 1920
     height: 1080
@@ -14,36 +13,23 @@ Window {
     property string currentAlbumName: ""
 
 
-    Rectangle {
-        id: albumArtContainer
+
+    Image {
         width: 640
         height: 640
-        color: "grey"
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: parent.top
-        radius: 50
-        clip: true
-
-        Image {
-            visible: false
-            id: albumArt
-            anchors.fill: parent
-        }
+        visible: true
+        id: albumArt
+        anchors.centerIn: parent
+        source: "file:///path/to/placeholder.png" //TODO: Set this placeholder
     }
 
-
-    Connections {
-        target: spotifyAPI
-        function onTrackInfoReceived(trackName, artistName, albumName) {
-            currentTrackName = trackName
-            currentArtistName = artistName
-            currentAlbumName = albumName
-        }
-        function onAlbumCoverReceived(albumCoverUrl) {
-            albumArt.source = albumCoverUrl
-        }
-    }
-
+    //    Button {
+    //        text: "Play"
+    //        anchors.centerIn: albumArt
+    //        onClicked: {
+    //            console.log("Button clicked")
+    //        }
+    //    }
 
     Text {
         id: trackName
@@ -52,7 +38,7 @@ Window {
         font.pointSize: 24
         font.bold: true
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: albumArtContainer.bottom
+        anchors.top: albumArt.bottom
         anchors.topMargin: 10
         // anchors.centerIn: parent
         text: currentTrackName
@@ -82,6 +68,30 @@ Window {
         anchors.topMargin: 5
         // anchors.centerIn: parent
         text: currentAlbumName
+    }
+
+    //SpotifyAPI connections
+    Connections {
+        target: spotifyAPI
+        function onTrackInfoReceived(trackName, artistName, albumName) {
+            currentTrackName = trackName
+            currentArtistName = artistName
+            currentAlbumName = albumName
+        }
+        function onAlbumCoverReceived(albumCoverUrl) {
+            //albumArt.source = ""
+            //albumArt.source = albumCoverUrl
+            //console.log(albumCoverUrl)
+            console.log("album cover received function")
+        }
+    }
+
+    // ImageProcessor Connections
+    Connections {
+        target: imageProcessor
+        function onImageReady(imagePath) {
+            albumArt.source = imagePath
+        }
     }
 
 }

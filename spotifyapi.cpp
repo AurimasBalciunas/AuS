@@ -67,26 +67,51 @@ void SpotifyAPI::getCurrentPlayingTrack()
     QUrl url("https://api.spotify.com/v1/me/player/currently-playing");
     auto reply = m_oauth2->get(url);
     connect(reply, &QNetworkReply::finished, [this, reply]() {
-        if (reply->error() != QNetworkReply::NoError) {
+        if (reply->error() != QNetworkReply::NoError)
+        {
             qDebug() << "Network error" << reply->errorString();
             return;
         }
 
         auto jsonData = reply->readAll();
         QJsonDocument doc = QJsonDocument::fromJson(jsonData);
-        QJsonObject obj = doc.object();
-        QJsonObject itemObject = obj["item"].toObject();
-        QString trackName = itemObject["name"].toString();
+        if (doc.isNull())
+        {
+            qDebug() << "No JSON returned by Sptoify API";
+            return;
+        }
 
+        QJsonObject obj = doc.object();
+        if (obj.isEmpty() || !obj.contains("item"))
+        {
+            qDebug() << "Empty or invalid item object";
+            return;
+        }
+
+        QJsonObject itemObject = obj["item"].toObject();
+        if(!itemObject.contains("artists") || itemObject["artists"].toArray().isEmpty())
+        {
+            qDebug() << "Response lacks artist information";
+            return;
+        }
+        if(!itemObject.contains("album"))
+        {
+            qDebug() << "Response lacks album information";
+            return;
+        }
+
+        QString trackName = itemObject["name"].toString();
         QJsonArray artistsArray = itemObject["artists"].toArray();
         QJsonObject artistObject = artistsArray.first().toObject();
         QString artistName = artistObject["name"].toString();
-
         QString albumName = itemObject["album"].toObject()["name"].toString();
 
         emit trackInfoReceived(trackName, artistName, albumName);
 
+
+        // Round the cornres on the album Cover
         QString albumCoverUrl = itemObject["album"].toObject()["images"].toArray()[0].toObject()["url"].toString();
+        qDebug() << albumCoverUrl;
         emit albumCoverReceived(albumCoverUrl);
     });
 }

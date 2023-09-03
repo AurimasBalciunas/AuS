@@ -8,10 +8,17 @@ find_package(Qt6 6.4 REQUIRED COMPONENTS Quick Network NetworkAuth)
 
 qt_standard_project_setup()
 
+qt_add_resources(RESOURCES
+    resources.qrc
+)
+
 qt_add_executable(appaus
     main.cpp
     spotifyapi.h
     spotifyapi.cpp
+    imageprocessor.h
+    imageprocessor.cpp
+    ${RESOURCES}
 )
 
 qt_add_qml_module(appaus
