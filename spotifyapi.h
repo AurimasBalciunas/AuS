@@ -28,11 +28,13 @@ public slots:
     void onAuthenticated() {
         timer->start(1000);
     }
+    void togglePlayback();
 
 signals:
     void authenticated();
     void trackInfoReceived(const QString &trackName, const QString &artistName, const QString &albumName);
     void albumCoverReceived(const QString &albumCoverUrl);
+    void musicToggled(const bool on);
 
 };
 

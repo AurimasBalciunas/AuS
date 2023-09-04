@@ -20,14 +20,18 @@ signals:
 
 public slots:
     void onNewUrl(const QString &url);
+    void onMusicToggled(const bool on);
+
 
 private slots:
     void onDownloadFinished(QNetworkReply *reply);
 
 private:
+    static bool grayscale;
     QPixmap roundImageCorners(const QPixmap &image);
     QNetworkAccessManager *networkManager;
     void setupConnections();
+
 };
 
 #endif // IMAGEPROCESSOR_H

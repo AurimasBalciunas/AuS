@@ -4,8 +4,11 @@
 #include <QBrush>
 #include <QBitmap>
 
+bool ImageProcessor::grayscale = false;
+
 ImageProcessor::ImageProcessor(QObject *parent) : QObject(parent)
 {
+    qDebug() << "set grayscale to false";
     networkManager = new QNetworkAccessManager(this);
     connect(networkManager, &QNetworkAccessManager::finished, this, &ImageProcessor::onDownloadFinished);
 }
@@ -26,14 +29,24 @@ void ImageProcessor::onDownloadFinished(QNetworkReply *reply)
         pixmap.loadFromData(reply->readAll());
         pixmap = roundImageCorners(pixmap);
     }
+    QImage roundedImage = pixmap.toImage();
+    if(grayscale)
+    {
+        roundedImage = roundedImage.convertToFormat(QImage::Format_Grayscale8);
+    }
     QString tempPath = "/tmp/image.png";
-    qDebug() << pixmap.save(tempPath, "PNG");
+    //qDebug() << pixmap.save(tempPath, "PNG");
+    roundedImage.save(tempPath, "PNG");
 
-    //TODO: convert pixmap to image and emit ehre
     QString imagePath = QUrl::fromLocalFile(tempPath).toString();
     QString dynamicImagePath = imagePath + "?" + QString::number(QDateTime::currentMSecsSinceEpoch());
     emit imageReady(dynamicImagePath);
+}
 
+void ImageProcessor::onMusicToggled(const bool on)
+{
+    grayscale = !on;
+    qDebug() << "Set grayscale to " << grayscale;
 }
 
 QPixmap ImageProcessor::roundImageCorners(const QPixmap &image)

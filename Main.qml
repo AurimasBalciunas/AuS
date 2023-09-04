@@ -21,6 +21,17 @@ Window {
         id: albumArt
         anchors.centerIn: parent
         source: "file:///path/to/placeholder.png" //TODO: Set this placeholder
+
+        MouseArea {
+            id: mouseArea
+            anchors.fill: parent
+
+            onClicked: {
+                console.log("Image clicked!")
+                spotifyAPI.togglePlayback();
+            }
+        }
+
     }
 
     //    Button {
@@ -35,11 +46,11 @@ Window {
         id: trackName
         color: "white"
         font.family: "Roboto"
-        font.pointSize: 24
+        font.pointSize: 40
         font.bold: true
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: albumArt.bottom
-        anchors.topMargin: 10
+        anchors.topMargin: 15
         // anchors.centerIn: parent
         text: currentTrackName
     }
@@ -48,11 +59,11 @@ Window {
         id: artistName
         color: "white"
         font.family: "Roboto"
-        font.pointSize: 20
+        font.pointSize: 30
         font.bold: true
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: trackName.bottom
-        anchors.topMargin: 5
+        anchors.topMargin: 10
         // anchors.centerIn: parent
         text: currentArtistName
     }
@@ -61,11 +72,11 @@ Window {
         id: albumName
         color: "white"
         font.family: "Roboto"
-        font.pointSize: 20
+        font.pointSize: 30
         font.bold: true
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: artistName.bottom
-        anchors.topMargin: 5
+        anchors.topMargin: 10
         // anchors.centerIn: parent
         text: currentAlbumName
     }
@@ -92,7 +103,6 @@ Window {
         function onImageReady(imagePath) {
             albumArt.source = ""
             albumArt.source = imagePath
-
         }
     }
 

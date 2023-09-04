@@ -24,6 +24,8 @@ int main(int argc, char *argv[])
         &app, []() { QCoreApplication::exit(-1); },
         Qt::QueuedConnection);
     QObject::connect(&spotifyAPI, &SpotifyAPI::albumCoverReceived, &imageProcessor, &ImageProcessor::onNewUrl);
+    QObject::connect(&spotifyAPI, &SpotifyAPI::musicToggled, &imageProcessor, &ImageProcessor::onMusicToggled);
+
     engine.load(url);
 
 

@@ -40,9 +40,11 @@ void SpotifyAPI::setupOAuth2(const QString& sharedKey)
 
 void SpotifyAPI::setupConnections()
 {
+    // OAuth2 Signals
     connect(m_oauth2, &QOAuth2AuthorizationCodeFlow::authorizeWithBrowser, this, &QDesktopServices::openUrl);
     connect(m_oauth2, &QOAuth2AuthorizationCodeFlow::granted, this, &SpotifyAPI::onGranted);
     connect(m_oauth2, &QOAuth2AuthorizationCodeFlow::error, this, &SpotifyAPI::onError);
+    // Timer that keeps updating the album art
     connect(timer, &QTimer::timeout, this, &SpotifyAPI::getCurrentPlayingTrack);
 }
 
@@ -54,7 +56,8 @@ void SpotifyAPI::authenticate()
 void SpotifyAPI::onGranted()
 {
     emit authenticated();
-    timer->start(1000);
+    timer->start(TIMER_INTERVAL_MS);
+    qDebug() << m_oauth2->token();
 }
 
 void SpotifyAPI::onError(const QString & error1, const QString & error2, const QUrl & errorUrl)
@@ -113,5 +116,54 @@ void SpotifyAPI::getCurrentPlayingTrack()
         QString albumCoverUrl = itemObject["album"].toObject()["images"].toArray()[0].toObject()["url"].toString();
         qDebug() << albumCoverUrl;
         emit albumCoverReceived(albumCoverUrl);
+    });
+}
+
+void SpotifyAPI::togglePlayback()
+{
+    // Figure out whether playing or not
+    bool isPlaying = false;
+    QUrl isPlayingUrl("https://api.spotify.com/v1/me/player/");
+    auto reply = m_oauth2->get(isPlayingUrl);
+    connect(reply, &QNetworkReply::finished, [this, reply, &isPlaying]() {
+        if (reply->error() != QNetworkReply::NoError)
+        {
+            qDebug() << "Network error" << reply->errorString();
+            return;
+        }
+        auto jsonData = reply->readAll();
+        QJsonDocument doc = QJsonDocument::fromJson(jsonData);
+        if (doc.isNull())
+        {
+            qDebug() << "No JSON returned by Sptoify API";
+            return;
+        }
+        QJsonObject obj = doc.object();
+        isPlaying = obj["is_playing"].toBool();
+        qDebug() << "Orig isPlaying is " << isPlaying;
+
+        // Play or pause
+        QUrl toggleUrl;
+        qDebug() << "isPlaying is " << isPlaying;
+        if(isPlaying)
+        {
+            qDebug() << "Pausing";
+            toggleUrl = QUrl("https://api.spotify.com/v1/me/player/pause");
+        }
+        else
+        {
+            qDebug() << "Playing";
+            toggleUrl = QUrl("https://api.spotify.com/v1/me/player/play");
+        }
+        auto putReply = m_oauth2->put(toggleUrl);
+        connect(putReply, &QNetworkReply::finished, [this, putReply, isPlaying]() {
+            if (putReply->error() != QNetworkReply::NoError)
+            {
+                qDebug() << "Network error" << putReply->errorString();
+                return;
+            }
+            emit musicToggled(!isPlaying); // emit the
+            SpotifyAPI::getCurrentPlayingTrack();
+        });
     });
 }
