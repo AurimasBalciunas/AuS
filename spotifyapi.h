@@ -19,7 +19,7 @@ private:
     QTimer* timer = new QTimer(this);
     void setupOAuth2(const QString&);
     void setupConnections();
-    void startInitialPlayback();
+    //void startInitialPlayback();
 
 private slots:
     void onGranted();

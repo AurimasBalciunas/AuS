@@ -137,7 +137,7 @@ void SpotifyAPI::togglePlayback()
         if (doc.isNull())
         {
             qDebug() << "TP: No JSON returned by Sptoify API";
-            startInitialPlayback();
+            //startInitialPlayback();
             return;
         }
         QJsonObject obj = doc.object();
