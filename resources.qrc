@@ -1,0 +1,8 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+	<qresource>
+		<file>round_corners.frag</file>
+		<file>round_corners.qsb</file>
+		<file>Unknown.jpeg</file>
+	</qresource>
+</RCC>
