@@ -8,9 +8,9 @@ find_package(Qt6 6.4 REQUIRED COMPONENTS Quick Network NetworkAuth)
 
 qt_standard_project_setup()
 
-qt_add_resources(RESOURCES
-    resources.qrc
-)
+#qt_add_resources(RESOURCES
+#    resources.qrc
+#)
 
 qt_add_executable(appaus
     main.cpp
@@ -18,7 +18,7 @@ qt_add_executable(appaus
     spotifyapi.cpp
     imageprocessor.h
     imageprocessor.cpp
-    ${RESOURCES}
+    #    ${RESOURCES}
 )
 
 qt_add_qml_module(appaus
@@ -27,13 +27,18 @@ qt_add_qml_module(appaus
     QML_FILES Main.qml
 )
 
-set_target_properties(appaus PROPERTIES
-    MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
-    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
-    MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
-    MACOSX_BUNDLE TRUE
-    WIN32_EXECUTABLE TRUE
-)
+# Platform-specific settings
+if(APPLE)
+    set_target_properties(appaus PROPERTIES
+        MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
+        MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
+        MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+        MACOSX_BUNDLE TRUE
+        WIN32_EXECUTABLE TRUE
+    )
+elseif(UNIX AND NOT APPLE)
+    # Linux-specific settings can go here
+endif()
 
 target_link_libraries(appaus
     PRIVATE Qt6::Quick Qt6::Network Qt6::NetworkAuth
@@ -42,3 +47,4 @@ target_link_libraries(appaus
 install(TARGETS appaus
     BUNDLE DESTINATION .
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+
