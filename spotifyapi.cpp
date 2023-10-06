@@ -121,6 +121,7 @@ void SpotifyAPI::getCurrentPlayingTrack()
 
 void SpotifyAPI::togglePlayback()
 {
+    qDebug() << "Toggling playback";
     // Figure out whether playing or not
     bool isPlaying = false;
     QUrl isPlayingUrl("https://api.spotify.com/v1/me/player/");
@@ -135,7 +136,8 @@ void SpotifyAPI::togglePlayback()
         QJsonDocument doc = QJsonDocument::fromJson(jsonData);
         if (doc.isNull())
         {
-            qDebug() << "No JSON returned by Sptoify API";
+            qDebug() << "TP: No JSON returned by Sptoify API";
+            startInitialPlayback();
             return;
         }
         QJsonObject obj = doc.object();
