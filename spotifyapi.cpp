@@ -118,6 +118,8 @@ void SpotifyAPI::getCurrentPlayingTrack()
         QString albumCoverUrl = itemObject["album"].toObject()["images"].toArray()[0].toObject()["url"].toString();
         qDebug() << albumCoverUrl;
         emit albumCoverReceived(albumCoverUrl);
+
+        reply->deleteLater();
     });
 }
 
@@ -147,7 +149,7 @@ void SpotifyAPI::togglePlayback()
         qDebug() << "Initial isPlaying is " << isPlaying;
 
         // Play or pause
-        QUrl toggleUrl;
+        QUrl toggleUrl = QUrl("");
         if(isPlaying)
         {
             qDebug() << "Attempting to pause";
@@ -168,6 +170,8 @@ void SpotifyAPI::togglePlayback()
             qDebug() << "Reply to attempt: " << putReply->readAll();
             emit musicToggled(!isPlaying); // emit the
             SpotifyAPI::getCurrentPlayingTrack();
+            putReply->deleteLater();
         });
+        reply->deleteLater();
     });
 }
