@@ -7,6 +7,7 @@ Window {
     visible: true
     title: qsTr("AuS")
     color: "black"
+    visibility: Window.FullScreen
 
     property string currentTrackName: ""
     property string currentArtistName: ""
@@ -22,7 +23,7 @@ Window {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         //anchors.centerIn: parent
-        anchors.topMargin: parent.height / 16
+        anchors.topMargin: parent.height / 8
         source: "file:///path/to/placeholder.png" //TODO: Set this placeholder
 
         MouseArea {
@@ -53,7 +54,7 @@ Window {
         font.bold: true
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: albumArt.bottom
-        anchors.topMargin: 15
+        anchors.topMargin: parent.height/16
         // anchors.centerIn: parent
         text: currentTrackName
     }
