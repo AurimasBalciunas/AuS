@@ -17,9 +17,11 @@ constexpr int TIMER_INTERVAL_MS = 1000;
 constexpr int SERVER_PORT = 3000;
 
 SpotifyAPI::SpotifyAPI(QObject *parent)
-    : QObject{parent}, m_oauth2{new QOAuth2AuthorizationCodeFlow(this)}, timer{new QTimer(this)}
+    : QObject{parent}, timer{new QTimer(this)}
 {
     const QString sharedKey = QProcessEnvironment::systemEnvironment().value("SPOTIFY_CLIENT_SECRET", "");
+    qDebug() << "SPOTIFY CLIENT SECRET" << sharedKey;
+
     setupOAuth2(sharedKey);
     setupConnections();
     SpotifyAPI::authenticate();
@@ -136,25 +138,24 @@ void SpotifyAPI::togglePlayback()
         QJsonDocument doc = QJsonDocument::fromJson(jsonData);
         if (doc.isNull())
         {
-            qDebug() << "TP: No JSON returned by Sptoify API";
+            qDebug() << "TP: No JSON returned by Spotify API";
             //startInitialPlayback();
             return;
         }
         QJsonObject obj = doc.object();
         isPlaying = obj["is_playing"].toBool();
-        qDebug() << "Orig isPlaying is " << isPlaying;
+        qDebug() << "Initial isPlaying is " << isPlaying;
 
         // Play or pause
         QUrl toggleUrl;
-        qDebug() << "isPlaying is " << isPlaying;
         if(isPlaying)
         {
-            qDebug() << "Pausing";
+            qDebug() << "Attempting to pause";
             toggleUrl = QUrl("https://api.spotify.com/v1/me/player/pause");
         }
         else
         {
-            qDebug() << "Playing";
+            qDebug() << "Attempting to play";
             toggleUrl = QUrl("https://api.spotify.com/v1/me/player/play");
         }
         auto putReply = m_oauth2->put(toggleUrl);
@@ -164,6 +165,7 @@ void SpotifyAPI::togglePlayback()
                 qDebug() << "Network error" << putReply->errorString();
                 return;
             }
+            qDebug() << "Reply to attempt: " << putReply->readAll();
             emit musicToggled(!isPlaying); // emit the
             SpotifyAPI::getCurrentPlayingTrack();
         });
