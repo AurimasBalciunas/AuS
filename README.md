@@ -1,4 +1,4 @@
-A Qt6 C++ application to interact with Spotify API, meant to display song info. Goal is to cross-compile for Raspi6 and add some generative AI features.
+A Qt6 C++ application to interact with Spotify API, meant to display song info. Supports cross-compilation for Raspberry Pi, functioning as a chromecast of sorts. Currently adding some generative AI features.
 
 
 # Cross-Compiling
