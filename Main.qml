@@ -19,7 +19,10 @@ Window {
         height: 640
         visible: true
         id: albumArt
-        anchors.centerIn: parent
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.top: parent.top
+        //anchors.centerIn: parent
+        anchors.topMargin: parent.height / 16
         source: "file:///path/to/placeholder.png" //TODO: Set this placeholder
 
         MouseArea {
