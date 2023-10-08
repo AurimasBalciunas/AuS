@@ -123,11 +123,42 @@ void SpotifyAPI::getCurrentPlayingTrack()
     });
 }
 
+void SpotifyAPI::sendPlaybackCommand(const QUrl& commandUrl, bool wasAttemptingToPlay)
+{
+    auto putReply = m_oauth2->put(commandUrl);
+    connect(putReply, &QNetworkReply::finished, [this, putReply, wasAttemptingToPlay]() {
+        if (putReply->error() != QNetworkReply::NoError)
+        {
+            qDebug() << "Network error while attempting playback command:" << putReply->errorString();
+
+            if (wasAttemptingToPlay)
+            {
+                qDebug() << "Error while attempting to play. Trying to pause instead.";
+                sendPlaybackCommand(QUrl("https://api.spotify.com/v1/me/player/pause"), false);
+            }
+            else
+            {
+                qDebug() << "Error while attempting to pause. Trying to play instead.";
+                sendPlaybackCommand(QUrl("https://api.spotify.com/v1/me/player/play"), true);
+            }
+
+            putReply->deleteLater();
+            return;
+        }
+        emit musicToggled(wasAttemptingToPlay);
+        SpotifyAPI::getCurrentPlayingTrack();
+        putReply->deleteLater();
+
+
+        // ... (rest of the logic after the PUT request completes)
+    });
+}
+
 void SpotifyAPI::togglePlayback()
 {
     qDebug() << "Toggling playback";
     // Figure out whether playing or not
-    bool isPlaying = false;
+    volatile bool isPlaying = false;
     QUrl isPlayingUrl("https://api.spotify.com/v1/me/player/");
     auto reply = m_oauth2->get(isPlayingUrl);
     connect(reply, &QNetworkReply::finished, [this, reply, &isPlaying]() {
@@ -153,25 +184,13 @@ void SpotifyAPI::togglePlayback()
         if(isPlaying)
         {
             qDebug() << "Attempting to pause";
-            toggleUrl = QUrl("https://api.spotify.com/v1/me/player/pause");
+            sendPlaybackCommand(QUrl("https://api.spotify.com/v1/me/player/pause"), false);
         }
         else
         {
             qDebug() << "Attempting to play";
-            toggleUrl = QUrl("https://api.spotify.com/v1/me/player/play");
+            sendPlaybackCommand(QUrl("https://api.spotify.com/v1/me/player/play"), true);
         }
-        auto putReply = m_oauth2->put(toggleUrl);
-        connect(putReply, &QNetworkReply::finished, [this, putReply, isPlaying]() {
-            if (putReply->error() != QNetworkReply::NoError)
-            {
-                qDebug() << "Network error" << putReply->errorString();
-                return;
-            }
-            qDebug() << "Reply to attempt: " << putReply->readAll();
-            emit musicToggled(!isPlaying); // emit the
-            SpotifyAPI::getCurrentPlayingTrack();
-            putReply->deleteLater();
-        });
         reply->deleteLater();
     });
 }
