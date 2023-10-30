@@ -20,7 +20,6 @@ private:
     void setupOAuth2(const QString&);
     void setupConnections();
     void sendPlaybackCommand(const QUrl& commandUrl, bool wasAttemptingToPlay);
-    //void startInitialPlayback();
 
 private slots:
     void onGranted();
