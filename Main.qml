@@ -14,7 +14,6 @@ Window {
     property string currentAlbumName: ""
 
 
-
     Image {
         width: 640
         height: 640
@@ -22,7 +21,6 @@ Window {
         id: albumArt
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
-        //anchors.centerIn: parent
         anchors.topMargin: parent.height / 8
         source: "file:///path/to/placeholder.png" //TODO: Set this placeholder
 
@@ -38,14 +36,6 @@ Window {
 
     }
 
-    //    Button {
-    //        text: "Play"
-    //        anchors.centerIn: albumArt
-    //        onClicked: {
-    //            console.log("Button clicked")
-    //        }
-    //    }
-
     Text {
         id: trackName
         color: "white"
@@ -55,7 +45,6 @@ Window {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: albumArt.bottom
         anchors.topMargin: parent.height/16
-        // anchors.centerIn: parent
         text: currentTrackName
     }
 
@@ -68,7 +57,6 @@ Window {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: trackName.bottom
         anchors.topMargin: 10
-        // anchors.centerIn: parent
         text: currentArtistName
     }
 
@@ -81,7 +69,6 @@ Window {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: artistName.bottom
         anchors.topMargin: 10
-        // anchors.centerIn: parent
         text: currentAlbumName
     }
 
@@ -111,4 +98,3 @@ Window {
     }
 
 }
-

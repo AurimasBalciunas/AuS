@@ -13,7 +13,14 @@ class ImageProcessor : public QObject
 
 public:
     explicit ImageProcessor(QObject *parent = nullptr);
-    Q_INVOKABLE void fetchImage(const QString &url);
+
+private:
+    QNetworkAccessManager *networkManager;
+    static bool grayscale;
+    void setupConnections();
+    QPixmap roundImageCorners(const QPixmap &image);
+    QString saveImage(const QImage &img);
+    void startImageDownload(const QString &url);
 
 signals:
     void imageReady(const QUrl &url);
@@ -22,15 +29,8 @@ public slots:
     void onNewUrl(const QString &url);
     void onMusicToggled(const bool on);
 
-
 private slots:
     void onDownloadFinished(QNetworkReply *reply);
-
-private:
-    static bool grayscale;
-    QPixmap roundImageCorners(const QPixmap &image);
-    QNetworkAccessManager *networkManager;
-    void setupConnections();
 
 };
 
