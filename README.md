@@ -1,7 +1,5 @@
 # AuS
-<p align="center">
-    <img src="https://github.com/AurimasBalciunas/AuS/assets/56936689/1cd9a275-92ce-4c66-bf8d-d3eb7b05aa88.type" width="500">
-</p>
+![Screenshot 2023-10-31 at 12 12 48 AM](https://github.com/AurimasBalciunas/AuS/assets/56936689/dd6c2cfc-fdb4-4dda-abc1-2e594af02089)
 AuS allows you to display current album art and song info on your Raspberry Pi while playing music elsewhere. It is a C++ Qt6 application that relies on Spotify API to gather the data.
 
 AuS can also be run on desktop. Required modules are QtBase, QtDeclarative, QtNetworkAuth, QtShaderTools, and Qt Quick.
